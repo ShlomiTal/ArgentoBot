@@ -17,8 +17,13 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def send_terms(update: Update, context: ContextTypes.DEFAULT_TYPE):
     terms = (
         "📜 *תנאי שימוש*\n\n"
-        "השירות נועד למטרות חינוכיות בלבד ואינו מהווה ייעוץ פיננסי.\n"
-        "בהמשך השימוש בבוט, אתה מאשר את התנאים.\n\n"
+בשימושך בשירותי Argento X (כולל בוט הטלגרם, הממשק הדיגיטלי, וכל פלטפורמה אחרת), אתה מאשר כי קראת, הבנת, והסכמת לתנאי השימוש המפורטים במסמך זה.
+
+אין ייעוץ השקעות
+כל המידע, הניתוחים, ההתרעות והתכנים המוצגים במערכת הם למטרות מידע כללי ולמידה בלבד ואינם מהווים בשום אופן ייעוץ פיננסי, השקעה או מסחר.
+שימושך במידע זה נעשה על אחריותך בלבד.
+
+⚠️ Argento X אינה רואה עצמה אחראית להחלטות מסחר, הפסדים או רווחים שייגרמו כתוצאה מהסתמכות על המידע המוצג.\n\n"
         "המשך לשלב הבא:"
     )
     keyboard = InlineKeyboardMarkup([
