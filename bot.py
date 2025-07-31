@@ -4,19 +4,19 @@ from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandle
 from pymongo import MongoClient
 from eth_wallet import generate_eth_address
 
-# Load environment variables
+# טעינת משתני סביבה
 BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 MONGO_URI = os.getenv("MONGO_URI")
 REQUIRED_AMOUNT = 0.01
-PREMIUM_CHANNEL_ID = os.getenv("PREMIUM_CHANNEL_ID")  # for info only
-PREMIUM_GROUP_LINK = os.getenv("PREMIUM_GROUP_LINK")  # optional (if not adding directly)
+PREMIUM_CHANNEL_ID = os.getenv("PREMIUM_CHANNEL_ID")  # למידע בלבד
+PREMIUM_GROUP_LINK = os.getenv("PREMIUM_GROUP_LINK")  # אופציונלי אם לא מוסיפים אוטומטית
 
-# Connect to MongoDB
+# חיבור למסד נתונים
 client = MongoClient(MONGO_URI)
 db = client["argento"]
 users = db["users"]
 
-# /start command handler
+# פונקציית התחלה - /start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     tg_id = update.effective_user.id
     name = update.effective_user.first_name
@@ -39,9 +39,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 parse_mode="Markdown"
             )
         else:
-            await send_terms(update)
+            await send_terms(update, context)
     else:
-        # First time user
+        # משתמש חדש
         users.insert_one({
             "telegram_id": tg_id,
             "name": name,
@@ -51,10 +51,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"👋 שלום {name}, ברוך הבא לבוט של Argento X!\n"
             "אנא אשר את תנאי השימוש כדי להמשיך."
         )
-        await send_terms(update)
+        await send_terms(update, context)
 
-# Send terms of use message
-async def send_terms(update: Update):
+# שליחת תנאי שימוש + כפתור אישור
+async def send_terms(update: Update, context: ContextTypes.DEFAULT_TYPE):
     terms_text = (
         "📜 *תנאי שימוש*\n\n"
         "השירות ניתן לצרכים חינוכיים בלבד ואינו מהווה ייעוץ פיננסי.\n"
@@ -65,7 +65,7 @@ async def send_terms(update: Update):
     ])
     await update.message.reply_text(terms_text, parse_mode="Markdown", reply_markup=keyboard)
 
-# Handle inline button (terms confirmation)
+# טיפול בלחיצה על כפתור "אני מאשר"
 async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     tg_id = query.from_user.id
@@ -97,7 +97,7 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
             parse_mode="Markdown"
         )
 
-# Main runner
+# הפעלת הבוט
 def main():
     app = ApplicationBuilder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
