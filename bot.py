@@ -7,7 +7,7 @@ from eth_wallet import generate_eth_address
 # טעינת משתני סביבה
 BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 MONGO_URI = os.getenv("MONGO_URI")
-REQUIRED_AMOUNT = 0.01
+REQUIRED_AMOUNT = 0.08
 PREMIUM_CHANNEL_ID = os.getenv("PREMIUM_CHANNEL_ID")  # למידע בלבד
 PREMIUM_GROUP_LINK = os.getenv("PREMIUM_GROUP_LINK")  # אופציונלי אם לא מוסיפים אוטומטית
 
@@ -90,7 +90,7 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.send_message(
             chat_id=tg_id,
             text=(
-                "💰 לתשלום, שלח בדיוק **0.01 ETH** לכתובת האישית שלך:\n\n"
+                "💰 לתשלום, שלח בדיוק **0.08 ETH** לכתובת האישית שלך:\n\n"
                 f"`{wallet['address']}`\n\n"
                 "_לאחר התשלום, החשבון שלך יאושר אוטומטית._"
             ),
