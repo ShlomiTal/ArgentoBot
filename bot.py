@@ -33,7 +33,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         elif status == "waiting_payment":
             await update.message.reply_text(
                 "💡 כבר אישרת את התנאים.\n"
-                "💰 שלח **0.01 ETH** לכתובת האישית שלך:\n\n"
+                "💰 שלח **0.08 ETH** לכתובת האישית שלך:\n\n"
                 f"`{user['eth_address']}`\n\n"
                 "_לאחר התשלום תתווסף אוטומטית לערוץ הפרימיום._",
                 parse_mode="Markdown"
