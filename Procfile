@@ -1,2 +1,2 @@
-python bot.py
+web: python bot.py
 worker: python eth_monitor.py
