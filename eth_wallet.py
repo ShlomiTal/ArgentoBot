@@ -1,19 +1,25 @@
 import os
 from eth_account import Account
 
-# Load mnemonic from Railway environment variable
+# אפשרות ליצירת ארנקים ממנמוניק
+Account.enable_unaudited_hdwallet_features()
+
+# טען מנמוניק מהסביבה
 MNEMONIC = os.getenv("ETH_MNEMONIC")
 
-def generate_eth_address(index: int):
-    """
-    Generate a unique ETH address from an HD wallet using the user's index.
-    You must store the private key securely (if needed).
-    """
-    if not MNEMONIC:
-        raise ValueError("Mnemonic not found. Set ETH_MNEMONIC in Railway.")
+if not MNEMONIC:
+    raise ValueError("❌ Missing ETH_MNEMONIC environment variable!")
 
-    acct = Account.from_mnemonic(MNEMONIC, account_path=f"m/44'/60'/0'/0/{index}")
-    return {
-        "address": acct.address,
-        "private_key": acct.key.hex()  # DO NOT expose this publicly
-    }
+def generate_eth_address(index: int) -> dict:
+    """
+    מחזיר כתובת ETH ו־Private Key לפי אינדקס במנמוניק.
+    """
+    try:
+        acct = Account.from_mnemonic(MNEMONIC, account_path=f"m/44'/60'/0'/0/{index}")
+        return {
+            "address": acct.address,
+            "private_key": acct.key.hex()
+        }
+    except Exception as e:
+        print(f"⚠️ Failed to generate wallet for index {index}: {e}")
+        raise
