@@ -7,9 +7,9 @@ from eth_wallet import generate_eth_address
 # Load environment variables
 BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 MONGO_URI = os.getenv("MONGO_URI")
-REQUIRED_AMOUNT = 0.08
+REQUIRED_AMOUNT = 0.01
 PREMIUM_CHANNEL_ID = os.getenv("PREMIUM_CHANNEL_ID")  # for info only
-PREMIUM_GROUP_LINK = os.getenv("PREMIUM_GROUP_LINK")  # optional
+PREMIUM_GROUP_LINK = os.getenv("PREMIUM_GROUP_LINK")  # optional (if not adding directly)
 
 # Connect to MongoDB
 client = MongoClient(MONGO_URI)
@@ -33,7 +33,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         elif status == "waiting_payment":
             await update.message.reply_text(
                 "💡 כבר אישרת את התנאים.\n"
-                "💰 שלח **0.08 ETH** לכתובת האישית שלך:\n\n"
+                "💰 שלח **0.01 ETH** לכתובת האישית שלך:\n\n"
                 f"`{user['eth_address']}`\n\n"
                 "_לאחר התשלום תתווסף אוטומטית לערוץ הפרימיום._",
                 parse_mode="Markdown"
@@ -60,26 +60,32 @@ async def send_terms(update: Update):
         "השירות ניתן לצרכים חינוכיים בלבד ואינו מהווה ייעוץ פיננסי.\n"
         "באישור תנאי השימוש תוכל לעבור לשלב התשלום."
     )
-    keyboard = InlineKeyboardMarkup([[
-        InlineKeyboardButton("✅ אני מאשר את התנאים", callback_data="accept_terms")
-    ]])
+    keyboard = InlineKeyboardMarkup([
+        [InlineKeyboardButton("✅ אני מאשר את התנאים", callback_data="accept_terms")]
+    ])
     await update.message.reply_text(terms_text, parse_mode="Markdown", reply_markup=keyboard)
 
 # Handle inline button (terms confirmation)
 async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     tg_id = query.from_user.id
-    user = users.find_one({"telegram_id": tg_id})
     await query.answer()
 
+    user = users.find_one({"telegram_id": tg_id})
+    if not user:
+        await context.bot.send_message(
+            chat_id=tg_id,
+            text="⚠️ שגיאה: לא נמצא משתמש במסד הנתונים.\nאנא לחץ /start כדי להתחיל מחדש."
+        )
+        return
+
     if query.data == "accept_terms":
-        if user["status"] in ["waiting_payment", "approved"]:
-            # Already confirmed
-            await query.edit_message_text("✅ כבר אישרת את התנאים.\nהמשך לתשלום.")
+        if user.get("status") in ["waiting_payment", "approved"]:
+            await query.edit_message_text("✅ כבר אישרת את התנאים.\nהמשך לתשלום:")
             await context.bot.send_message(
                 chat_id=tg_id,
                 text=(
-                    "💰 שלח **0.08 ETH** לכתובת האישית שלך:\n\n"
+                    "💰 שלח **0.01 ETH** לכתובת האישית שלך:\n\n"
                     f"`{user['eth_address']}`\n\n"
                     "_לאחר התשלום תתווסף אוטומטית לערוץ הפרימיום._"
                 ),
@@ -102,7 +108,7 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.send_message(
             chat_id=tg_id,
             text=(
-                "💰 לתשלום, שלח בדיוק **0.08 ETH** לכתובת האישית שלך:\n\n"
+                "💰 לתשלום, שלח בדיוק **0.01 ETH** לכתובת האישית שלך:\n\n"
                 f"`{wallet['address']}`\n\n"
                 "_לאחר שהתשלום יתקבל, תתווסף אוטומטית לערוץ הפרימיום._"
             ),
