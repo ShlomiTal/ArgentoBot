@@ -7,7 +7,7 @@ from eth_wallet import generate_eth_address
 # Load environment variables
 BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 MONGO_URI = os.getenv("MONGO_URI")
-REQUIRED_AMOUNT = 0.01
+REQUIRED_AMOUNT = 0.08
 PREMIUM_CHANNEL_ID = os.getenv("PREMIUM_CHANNEL_ID")  # for info only
 PREMIUM_GROUP_LINK = os.getenv("PREMIUM_GROUP_LINK")  # optional (if not adding directly)
 
@@ -33,7 +33,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         elif status == "waiting_payment":
             await update.message.reply_text(
                 "💡 כבר אישרת את התנאים.\n"
-                "💰 שלח **0.01 ETH** לכתובת האישית שלך:\n\n"
+                "💰 שלח **0.08 ETH** לכתובת האישית שלך:\n\n"
                 f"`{user['eth_address']}`\n\n"
                 "_לאחר התשלום תתווסף אוטומטית לערוץ הפרימיום._",
                 parse_mode="Markdown"
@@ -85,7 +85,7 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await context.bot.send_message(
                 chat_id=tg_id,
                 text=(
-                    "💰 שלח **0.01 ETH** לכתובת האישית שלך:\n\n"
+                    "💰 שלח **0.08 ETH** לכתובת האישית שלך:\n\n"
                     f"`{user['eth_address']}`\n\n"
                     "_לאחר התשלום תתווסף אוטומטית לערוץ הפרימיום._"
                 ),
@@ -108,7 +108,7 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.send_message(
             chat_id=tg_id,
             text=(
-                "💰 לתשלום, שלח בדיוק **0.01 ETH** לכתובת האישית שלך:\n\n"
+                "💰 לתשלום, שלח בדיוק **0.08 ETH** לכתובת האישית שלך:\n\n"
                 f"`{wallet['address']}`\n\n"
                 "_לאחר שהתשלום יתקבל, תתווסף אוטומטית לערוץ הפרימיום._"
             ),
